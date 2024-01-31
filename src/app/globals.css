@@ -1,33 +1,107 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html {
+  font-size: 14px;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: var(--font-family);
+  font-weight: normal;
+  background: var(--surface-ground);
+  color: var(--text-color);
+  padding: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #050e27;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.card {
+  background: var(--surface-card);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  background-color: #1F2937;
+}
+
+th .p-column-header-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tags_parent_div {
+  width: 250px;
+}
+.tags_span {
+  padding: 1% 2%;
+  margin: 1% 2%;
+  border-radius: 5px;
+  background-color: green;
+  color: white;
+}
+.rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.likes {
+  margin: 1% 3%;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.like {
+  color: #28C76F;
+  font-weight: 500;
+}
+.dislike {
+  color: #EA5455;
+  font-weight: 500;
+}
+.difficulty {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 400;
+}
+
+.difficulty_1 {
+  background-color: #1c8b4e;
+  box-shadow: 0 0 5px #1c8b4e;
+}
+.difficulty_2 {
+  background-color: #0091a2;
+  box-shadow: 0 0 5px #0091a2;
+}
+.difficulty_3 {
+  background-color: #2f43a5;
+  box-shadow: 0 0 5px #2f43a5;
+}
+.difficulty_4 {
+  background-color: #3634a2;
+  box-shadow: 0 0 5px #3634a2;
+}
+.difficulty_5 {
+  background-color: #b36f2f;
+  box-shadow: 0 0 5px #b36f2f;
+}
+.difficulty_6 {
+  background-color: #a43b3c;
+  box-shadow: 0 0 5px #a43b3c;
+}
+.difficulty_7 {
+  background-color: #050e27;
+  box-shadow: 0 0 5px #050e27;
+}
+.attempts {
+  display: flex;
+  justify-content: space-between;
+}
+.solved {
+  padding: 5px 5px;
+  color: #28C76F;
+  font-weight: 500;
+}
+.notSolved {
+  padding: 5px 0;
+  color: #EA5455;
+  font-weight: 500;
 }
