@@ -12,11 +12,11 @@ export default function Home() {
   return (
     
     <Suspense fallback={<div>Loading...</div>}>
-    <SkeletonTheme baseColor="#202020" highlightColor="#444">
-      <PrimeReactProvider>
-        <DataGrid />
-      </PrimeReactProvider>
-    </SkeletonTheme>
+      <SkeletonTheme baseColor="#202020" highlightColor="#444">
+        <PrimeReactProvider>
+          <DataGrid />
+        </PrimeReactProvider>
+      </SkeletonTheme>
   </Suspense>
   );
 }
