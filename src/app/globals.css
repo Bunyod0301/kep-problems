@@ -20,12 +20,6 @@ body {
   margin-bottom: 1rem;
   background-color: #1F2937;
 }
-
-/* th .p-column-header-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
 .tags_parent_div {
   width: 100%;
 }
@@ -62,7 +56,6 @@ body {
   color: white;
   font-weight: 400;
 }
-
 .difficulty_1 {
   background-color: #1c8b4e;
   box-shadow: 0 0 5px #1c8b4e;
@@ -104,4 +97,43 @@ body {
   padding: 5px 0;
   color: #EA5455;
   font-weight: 500;
+}
+.filter {
+  /* background-color: red; */
+  width: 100%;
+  padding: 1% 5%;
+  display: flex;
+  justify-content: space-between;
+}
+.title_search label {
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+.title_search input {
+  height: 30px;
+  padding: 2px 5px;
+  margin: 2px;
+  background: none;
+  color: white;
+  background-color: #3d4b5f;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+}
+.difficulty_filter label {
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+.difficulty_filter select {
+  height: 30px;
+  background-color: #3d4b5f;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  user-select: contain;
 }
