@@ -7,6 +7,7 @@ import { BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs
 import { FaUserCheck} from "react-icons/fa6";
 import { FaUserTimes } from "react-icons/fa";
 import { Paginator } from 'primereact/paginator';
+import Filter from '@/Components/Filter';
 
 export default function App() {
 
@@ -15,6 +16,7 @@ export default function App() {
   const page = params.get('page') || 1;
 
   const router = useRouter();
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState([]);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(20);
@@ -32,6 +34,7 @@ export default function App() {
 
 
   const fetchData = async () => {
+    setLoading(true);
     let apiUrl = `https://kep.uz/api/problems/?page=${page}`;
 
     if (difficultyFilter !== "") {
@@ -48,8 +51,10 @@ export default function App() {
       setData(data.data);
       setTotalRecords(data.total);
       setFirst((page - 1) * rows);
+      setLoading(false)
     } catch (error) {
       console.error(error);
+      setLoading(false)
     }
   };
   useEffect(() => {
@@ -59,29 +64,17 @@ export default function App() {
   const handleDifficultyFilterChange = (event) => {
     setDifficultyFilter(event.target.value);
   };
-
+  const handleFilterSearch = (event) => {
+    setTitleSearch(event.target.value)
+  }
 
   return (
     <div className="card">
-
-      <label htmlFor="difficultyFilter">Difficulty Filter:</label>
-      <select id="difficultyFilter" value={difficultyFilter} onChange={handleDifficultyFilterChange}>
-        <option defaultValue={""} value="">All</option>
-        <option value="1">Beginner</option>
-        <option value="2">Basic</option>
-        <option value="3">Normal</option>
-        <option value="4">Medium</option>
-        <option value="5">Advanced</option>
-        <option value="6">Hard</option>
-        <option value="7">Extremal</option>
-      </select>
-
-      <label htmlFor="titleSearch">Title Search:</label>
-      <input
-        id="titleSearch"
-        type="text"
-        value={titleSearch}
-        onChange={(e) => setTitleSearch(e.target.value)}
+      <Filter
+        difficultyFilter={difficultyFilter}
+        handleDifficultyFilterChange={handleDifficultyFilterChange}
+        titleSearch={titleSearch}
+        handleFilterSearch={handleFilterSearch}
       />
 
       <DataTable value={data} tableStyle={{ minWidth: '50rem'}}>
@@ -155,7 +148,13 @@ export default function App() {
           style={{ width: '10%' }}
         />
       </DataTable>
-      <Paginator first={first} rows={rows} totalRecords={totalRecords} pageLinkSize={10} onPageChange={onPageChange} />
+      <Paginator
+        first={first} rows={rows}
+        totalRecords={totalRecords}
+        pageLinkSize={10}
+        onPageChange={onPageChange}
+        style={{border: "none", margin: "20px 0"}}
+      />
     </div>
   );
 }
