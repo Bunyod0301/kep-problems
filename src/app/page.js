@@ -1,4 +1,6 @@
 "use client"
+import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from 'react-loading-skeleton'
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { DataTable } from 'primereact/datatable';
@@ -11,7 +13,6 @@ import Filter from '@/Components/Filter';
 
 export default function App() {
 
-  const pathName = usePathname();
   const params = useSearchParams();
   const page = params.get('page') || 1;
 
@@ -63,9 +64,11 @@ export default function App() {
 
   const handleDifficultyFilterChange = (event) => {
     setDifficultyFilter(event.target.value);
+    router.push("?page=1")
   };
   const handleFilterSearch = (event) => {
     setTitleSearch(event.target.value)
+    router.push("?page=1")
   }
 
   return (
@@ -76,12 +79,14 @@ export default function App() {
         titleSearch={titleSearch}
         handleFilterSearch={handleFilterSearch}
       />
-
-      <DataTable value={data} tableStyle={{ minWidth: '50rem'}}>
+      <DataTable value={data} tableStyle={{ minWidth: '50rem'}} scrollHeight='65vh'>
         <Column
           field= "id"
           header="ID"
           sortable
+          body={(rowData) => (
+            loading ? <Skeleton /> : rowData.id
+          )}
           style={{ width: '2%' }}
         />
 
@@ -89,6 +94,9 @@ export default function App() {
           field="title"
           header="Title"
           sortable
+          body={(rowData) => (
+            loading ? <Skeleton /> : rowData.title
+          )}
           style={{ width: '25%' }}
         />
 
@@ -98,6 +106,7 @@ export default function App() {
           body={rowData => {
             if (rowData.tags) {
               return (
+                loading ? <Skeleton /> :
                 <div className='tags_parent_div'>
                   {rowData.tags.map((item, i) => (
                     <span className='tags_span' key={i}>{item.name}</span>
@@ -113,6 +122,7 @@ export default function App() {
           field="difficulty"
           header="Difficulty"
           body= {(rowData)=> (
+            loading ? <Skeleton /> :
             <span
               className={`difficulty difficulty_${rowData.difficulty}`}
             >
@@ -126,6 +136,7 @@ export default function App() {
           field='likesCount'
           header="Rating"
           body={(rowData) => (
+            loading ? <Skeleton /> :
             <div className='rating'>
               <span className='likes like'><BsFillHandThumbsUpFill /> <span>{rowData.likesCount}</span></span>
               <span className='likes dislike'><BsFillHandThumbsDownFill /> <span>{rowData.dislikesCount}</span></span>
@@ -140,6 +151,7 @@ export default function App() {
           header="Attempts"
           sortable
           body={(rowData) => (
+            loading ? <Skeleton /> :
             <div className='attempts'>
               <span className='solved'><FaUserCheck />{rowData.solved}</span>
               <span className='notSolved'><FaUserTimes />{rowData.notSolved}</span>
@@ -148,12 +160,13 @@ export default function App() {
           style={{ width: '10%' }}
         />
       </DataTable>
+
       <Paginator
         first={first} rows={rows}
         totalRecords={totalRecords}
         pageLinkSize={10}
         onPageChange={onPageChange}
-        style={{border: "none", margin: "20px 0"}}
+        style={{border: "none"}}
       />
     </div>
   );
