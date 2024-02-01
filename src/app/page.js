@@ -1,113 +1,161 @@
-import Image from "next/image";
+"use client"
+import React, { useState, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs";
+import { FaUserCheck} from "react-icons/fa6";
+import { FaUserTimes } from "react-icons/fa";
+import { Paginator } from 'primereact/paginator';
 
-export default function Home() {
+export default function App() {
+
+  const pathName = usePathname();
+  const params = useSearchParams();
+  const page = params.get('page') || 1;
+
+  const router = useRouter();
+  const [data, setData] = useState([]);
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(20);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [difficultyFilter, setDifficultyFilter] = useState("");
+  const [titleSearch, setTitleSearch] = useState('');
+
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+
+    const currentPage = Math.floor(event.first / event.rows) + 1;
+    router.push(`?page=${currentPage}`);
+  };
+
+
+  const fetchData = async () => {
+    let apiUrl = `https://kep.uz/api/problems/?page=${page}`;
+
+    if (difficultyFilter !== "") {
+      apiUrl += `&difficulty=${difficultyFilter.toLowerCase()}`;
+    }
+
+    if (titleSearch.trim() !== '') {
+      apiUrl += `&title=${encodeURIComponent(titleSearch)}`;
+    }
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setData(data.data);
+      setTotalRecords(data.total);
+      setFirst((page - 1) * rows);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [rows, difficultyFilter, titleSearch, page]);
+
+  const handleDifficultyFilterChange = (event) => {
+    setDifficultyFilter(event.target.value);
+  };
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div className="card">
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+      <label htmlFor="difficultyFilter">Difficulty Filter:</label>
+      <select id="difficultyFilter" value={difficultyFilter} onChange={handleDifficultyFilterChange}>
+        <option defaultValue={""} value="">All</option>
+        <option value="1">Beginner</option>
+        <option value="2">Basic</option>
+        <option value="3">Normal</option>
+        <option value="4">Medium</option>
+        <option value="5">Advanced</option>
+        <option value="6">Hard</option>
+        <option value="7">Extremal</option>
+      </select>
+
+      <label htmlFor="titleSearch">Title Search:</label>
+      <input
+        id="titleSearch"
+        type="text"
+        value={titleSearch}
+        onChange={(e) => setTitleSearch(e.target.value)}
+      />
+
+      <DataTable value={data} tableStyle={{ minWidth: '50rem'}}>
+        <Column
+          field= "id"
+          header="ID"
+          sortable
+          style={{ width: '2%' }}
         />
-      </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+        <Column
+          field="title"
+          header="Title"
+          sortable
+          style={{ width: '25%' }}
+        />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+        <Column
+          field='tags'
+          header="Tags"
+          body={rowData => {
+            if (rowData.tags) {
+              return (
+                <div className='tags_parent_div'>
+                  {rowData.tags.map((item, i) => (
+                    <span className='tags_span' key={i}>{item.name}</span>
+                  ))}
+                </div>
+              );
+            }
+            return null;
+          }}
+        />
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
+        <Column
+          field="difficulty"
+          header="Difficulty"
+          body= {(rowData)=> (
+            <span
+              className={`difficulty difficulty_${rowData.difficulty}`}
+            >
+              {rowData.difficultyTitle}
             </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+          )}
+          style={{ width: '10%', textAlign: 'center'}}
+        />
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <Column
+          field='likesCount'
+          header="Rating"
+          body={(rowData) => (
+            <div className='rating'>
+              <span className='likes like'><BsFillHandThumbsUpFill /> <span>{rowData.likesCount}</span></span>
+              <span className='likes dislike'><BsFillHandThumbsDownFill /> <span>{rowData.dislikesCount}</span></span>
+            </div>
+          )}
+          sortable
+          style={{ width: '10%' }}
+        />
+
+        <Column
+          field="solved"
+          header="Attempts"
+          sortable
+          body={(rowData) => (
+            <div className='attempts'>
+              <span className='solved'><FaUserCheck />{rowData.solved}</span>
+              <span className='notSolved'><FaUserTimes />{rowData.notSolved}</span>
+            </div>
+          )}
+          style={{ width: '10%' }}
+        />
+      </DataTable>
+      <Paginator first={first} rows={rows} totalRecords={totalRecords} pageLinkSize={10} onPageChange={onPageChange} />
+    </div>
   );
 }

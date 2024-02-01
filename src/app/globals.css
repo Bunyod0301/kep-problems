@@ -21,17 +21,17 @@ body {
   background-color: #1F2937;
 }
 
-th .p-column-header-content {
+/* th .p-column-header-content {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 .tags_parent_div {
-  width: 250px;
+  width: 100%;
 }
 .tags_span {
-  padding: 1% 2%;
-  margin: 1% 2%;
+  padding: 3px 10px;
+  margin: 0 3px;
   border-radius: 5px;
   background-color: green;
   color: white;
