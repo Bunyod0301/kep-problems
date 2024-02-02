@@ -25,7 +25,17 @@ export default function DataGrid() {
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [titleSearch, setTitleSearch] = useState('');
   const [ordering, setOrdering] = useState(true)
-  const [field, setField] = useState('id')
+  const [sortField, setSortField] = useState('id');
+  const [sortOrder, setSortOrder] = useState(1);
+
+  const [multiSortMeta, setMultiSortMeta] = useState([
+    { field: 'id', order: -1 },
+    { field: 'title', order: -1 },
+    { field: 'difficulty', order: -1 },
+    { field: 'rating', order: -1 },
+    { field: 'rating', order: -1 },
+  ]);
+
 
   const onPageChange = (event) => {
     setFirst(event.first);
@@ -38,7 +48,8 @@ export default function DataGrid() {
 
   const fetchData = async () => {
     setLoading(true);
-    let apiUrl = `https://kep.uz/api/problems?${ordering ? `ordering=${field}` : `ordering=-${field}`}&page=${page}`;
+    let apiUrl = 
+      `https://kep.uz/api/problems?ordering=${ordering ? `${sortField}` : `-${sortField}`}&page=${page}`;
     if (difficultyFilter !== "") {
       apiUrl += `&difficulty=${difficultyFilter.toLowerCase()}`;
     }
@@ -80,15 +91,28 @@ export default function DataGrid() {
         titleSearch={titleSearch}
         handleFilterSearch={handleFilterSearch}
       />
-      <DataTable value={data} tableStyle={{ minWidth: '50rem'}} scrollHeight='65vh'
-      sortMode="single"
-      onSort={(e) => {
-        const { sortField, sortOrder } = e;
-        setOrdering(!ordering)
-        setField(sortField)
-      }}
->
+      <DataTable
+        value={data}
+        tableStyle={{ minWidth: '50rem'}}
+        scrollHeight='65vh'
+        sortField={sortField}
+        sortOrder={sortOrder}
+        multiSortMeta={multiSortMeta}
+        onSort={(e) => {
+          setSortField(e.sortField);
+          setSortOrder(e.sortOrder);
+          setMultiSortMeta(e.multiSortMeta);
+          if(e.sortOrder == 1) {
+            setOrdering(true);
+          }
+          if(e.sortOrder == -1) {
+            setOrdering(false);
+          }
+          console.log(multiSortMeta);
+        }}
+      >
         <Column
+          sortField='id'
           field= "id"
           header="ID"
           sortable
