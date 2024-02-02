@@ -108,7 +108,6 @@ export default function DataGrid() {
           if(e.sortOrder == -1) {
             setOrdering(false);
           }
-          console.log(multiSortMeta);
         }}
       >
         <Column
