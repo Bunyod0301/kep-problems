@@ -24,6 +24,8 @@ export default function DataGrid() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [titleSearch, setTitleSearch] = useState('');
+  const [ordering, setOrdering] = useState(true)
+  const [field, setField] = useState('id')
 
   const onPageChange = (event) => {
     setFirst(event.first);
@@ -36,8 +38,7 @@ export default function DataGrid() {
 
   const fetchData = async () => {
     setLoading(true);
-    let apiUrl = `https://kep.uz/api/problems/?page=${page}`;
-
+    let apiUrl = `https://kep.uz/api/problems?${ordering ? `ordering=${field}` : `ordering=-${field}`}&page=${page}`;
     if (difficultyFilter !== "") {
       apiUrl += `&difficulty=${difficultyFilter.toLowerCase()}`;
     }
@@ -60,7 +61,7 @@ export default function DataGrid() {
   };
   useEffect(() => {
     fetchData();
-  }, [rows, difficultyFilter, titleSearch, page]);
+  }, [rows, difficultyFilter, titleSearch, page, ordering]);
 
   const handleDifficultyFilterChange = (event) => {
     setDifficultyFilter(event.target.value);
@@ -79,7 +80,14 @@ export default function DataGrid() {
         titleSearch={titleSearch}
         handleFilterSearch={handleFilterSearch}
       />
-      <DataTable value={data} tableStyle={{ minWidth: '50rem'}} scrollHeight='65vh'>
+      <DataTable value={data} tableStyle={{ minWidth: '50rem'}} scrollHeight='65vh'
+      sortMode="single"
+      onSort={(e) => {
+        const { sortField, sortOrder } = e;
+        setOrdering(!ordering)
+        setField(sortField)
+      }}
+>
         <Column
           field= "id"
           header="ID"
@@ -121,6 +129,7 @@ export default function DataGrid() {
         <Column
           field="difficulty"
           header="Difficulty"
+          sortable
           body= {(rowData)=> (
             loading ? <Skeleton /> :
             <span
@@ -133,7 +142,7 @@ export default function DataGrid() {
         />
 
         <Column
-          field='likesCount'
+          field='rating'
           header="Rating"
           body={(rowData) => (
             loading ? <Skeleton /> :
